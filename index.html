@@ -102,213 +102,252 @@
   .box .hint{font-size:.68rem; color:var(--bad); margin-top:2px; font-style:italic;}
 
   footer{font-size:.78rem; color:var(--bark); margin-top:10px;}
+
+  #game-dock{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--paper);margin-bottom:24px;box-shadow:0 5px 8px rgba(0,0,0,.08);}
+  #controls{position:static;margin-bottom:0;gap:8px;}
+  #languageBtn{margin-left:auto;font-weight:700;}
+  #specimen-tray{border:1px solid var(--bark);border-radius:0 0 5px 5px;background:var(--paper-2);}
+  #specimen-tray summary{padding:8px 12px;cursor:pointer;color:var(--forest);font-weight:700;font-size:.86rem;}
+  .tray-body{padding:0 8px 8px;}
+  .tray-help{font-size:.74rem;color:var(--bark);margin:0 4px 5px;}
+  .row-title{font-size:.72rem;font-weight:600;color:var(--bark);margin:2px 30px;}
+  .tray-row{display:grid;grid-template-columns:24px minmax(0,1fr) 24px;gap:5px;align-items:center;}
+  .scroll-button{border:1px solid var(--bark);border-radius:3px;background:var(--paper);color:var(--forest);font-size:1.3rem;cursor:pointer;padding:0;height:30px;}
+  #pool,#boxes{display:flex;flex-wrap:nowrap;gap:10px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding:8px 6px;min-width:0;scroll-snap-type:x proximity;}
+  #pool{border:0;border-radius:0;min-height:46px;align-items:center;}
+  #pool .card{flex:0 0 200px;scroll-snap-align:start;}
+  .card{width:200px;max-width:100%;padding:5px 10px 5px 20px;font-size:.77rem;min-height:28px;}
+  .card .name{display:block;line-height:1.25;}
+  html[lang="en"] .card .name{font-style:italic;}
+  .card .x{border:0;padding:0;font-family:inherit;}
+  #boxes .box{flex:0 0 200px;min-height:64px;scroll-snap-align:start;}
+  .box .slot{min-height:32px;}
+  .box .card{width:100%;}
+  .card:focus-visible,button:focus-visible,summary:focus-visible,#pool:focus-visible,#boxes:focus-visible{outline:2px solid var(--cap);outline-offset:2px;}
+  @media(max-width:550px){
+    .wrap{padding:12px 10px 40px;}
+    #controls{padding:8px;gap:6px;}
+    #controls button{font-size:.75rem;padding:5px 7px;}
+    #score{font-size:.78rem;}
+    .tray-help{font-size:.7rem;}
+  }
+  @media(max-height:550px){#game-dock{position:relative;top:auto;}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>Dichotomous Key to the Fungi</h1>
-    <p class="sub">44 fungi and fungus-like organisms — slime molds, water molds, and true fungi</p>
-    <div class="howto">
-      Work through the key below one couplet at a time: pick statement <b>a</b> or <b>b</b>, then follow the arrow.
-      A number sends you to the next couplet; a box number is your final identification.
-      Drag the matching species from the pool onto that box, then check your work.
-    </div>
+    <h1 data-i18n="title">Dichotomous Key to the Fungi</h1>
+    <p class="sub" data-i18n="subtitle"></p>
+    <div class="howto" data-i18n="instructions"></div>
   </header>
 
-  <div id="controls">
-    <button class="primary" id="checkBtn">Check answers</button>
-    <button id="revealBtn">Reveal correct names</button>
-    <button id="resetBtn">Reset</button>
-    <span id="score"></span>
+  <div id="game-dock">
+    <div id="controls">
+      <button class="primary" id="checkBtn" data-i18n="check">Check answers</button>
+      <button id="revealBtn" data-i18n="reveal">Reveal correct names</button>
+      <button id="resetBtn" data-i18n="reset">Reset</button>
+      <button id="languageBtn" type="button" aria-label="Switch to Hungarian">English</button>
+      <span id="score" aria-live="polite"></span>
+    </div>
+    <details id="specimen-tray" open>
+      <summary data-i18n="tray">Names &amp; identification boxes</summary>
+      <div class="tray-body">
+        <p class="tray-help" data-i18n="trayHelp"></p>
+        <div class="row-title" data-i18n="names">Names</div>
+        <div class="tray-row">
+          <button class="scroll-button" data-row="pool" data-direction="-1">‹</button>
+          <div id="pool" tabindex="0"></div>
+          <button class="scroll-button" data-row="pool" data-direction="1">›</button>
+        </div>
+        <div class="row-title" data-i18n="boxes">Identification boxes</div>
+        <div class="tray-row">
+          <button class="scroll-button" data-row="boxes" data-direction="-1">‹</button>
+          <div id="boxes" tabindex="0"></div>
+          <button class="scroll-button" data-row="boxes" data-direction="1">›</button>
+        </div>
+      </div>
+    </details>
   </div>
 
-  <section id="pool-section">
-    <h2>Specimen pool</h2>
-    <div id="pool"></div>
-  </section>
-
   <section id="key-section">
-    <h2>Dichotomous key</h2>
+    <h2 data-i18n="keyTitle">Dichotomous key</h2>
 
     <div class="couplet"><span class="cnum">1</span>
-      <p><b>a.</b> At some stage the organism exists as a moving, wall-less mass of protoplasm (a plasmodium); spores develop later without true hyphae <span class="goto">→ 2</span></p>
-      <p><b>b.</b> The organism never forms a plasmodium; it grows as thread-like hyphae or as single, wall-bound cells <span class="goto">→ 5</span></p>
+      <p><b>a.</b> <span data-i18n="key0">At some stage the organism exists as a moving, wall-less mass of protoplasm (a plasmodium); spores develop later without true hyphae</span> <span class="goto">→ 2</span></p>
+      <p><b>b.</b> <span data-i18n="key1">The organism never forms a plasmodium; it grows as thread-like hyphae or as single, wall-bound cells</span> <span class="goto">→ 5</span></p>
     </div>
     <div class="couplet"><span class="cnum">2</span>
-      <p><b>a.</b> Fruiting body one single large, cushion-like mass, bright egg-yolk yellow when fresh ("dog vomit slime mold") <span class="goto term">→ Box I</span></p>
-      <p><b>b.</b> Fruiting bodies not a single large yellow cushion <span class="goto">→ 3</span></p>
+      <p><b>a.</b> <span data-i18n="key2">Fruiting body one single large, cushion-like mass, bright egg-yolk yellow when fresh ("dog vomit slime mold")</span> <span class="goto term">→ Box I</span></p>
+      <p><b>b.</b> <span data-i18n="key3">Fruiting bodies not a single large yellow cushion</span> <span class="goto">→ 3</span></p>
     </div>
     <div class="couplet"><span class="cnum">3</span>
-      <p><b>a.</b> Many small, stalked or clustered sporangia; the plasmodium is often white, cream, or yellow before fruiting <span class="goto term">→ Box II</span></p>
-      <p><b>b.</b> Fruiting body not a cluster of small stalked sporangia <span class="goto">→ 4</span></p>
+      <p><b>a.</b> <span data-i18n="key4">Many small, stalked or clustered sporangia; the plasmodium is often white, cream, or yellow before fruiting</span> <span class="goto term">→ Box II</span></p>
+      <p><b>b.</b> <span data-i18n="key5">Fruiting body not a cluster of small stalked sporangia</span> <span class="goto">→ 4</span></p>
     </div>
     <div class="couplet"><span class="cnum">4</span>
-      <p><b>a.</b> Small pink to coral globules on rotting wood, oozing a pink paste when young, turning gray-brown and powdery with age ("wolf's milk") <span class="goto term">→ Box III</span></p>
-      <p><b>b.</b> A whitish-gray, crust-like layer containing lime (calcium carbonate) granules, usually on grass or low vegetation <span class="goto term">→ Box IV</span></p>
+      <p><b>a.</b> <span data-i18n="key6">Small pink to coral globules on rotting wood, oozing a pink paste when young, turning gray-brown and powdery with age ("wolf's milk")</span> <span class="goto term">→ Box III</span></p>
+      <p><b>b.</b> <span data-i18n="key7">A whitish-gray, crust-like layer containing lime (calcium carbonate) granules, usually on grass or low vegetation</span> <span class="goto term">→ Box IV</span></p>
     </div>
     <div class="couplet"><span class="cnum">5</span>
-      <p><b>a.</b> Cell walls made mainly of cellulose, not chitin; often produces motile zoospores; aquatic or parasitic on plants <span class="goto">→ 6</span></p>
-      <p><b>b.</b> Cell walls made of chitin; no motile zoospores produced <span class="goto">→ 9</span></p>
+      <p><b>a.</b> <span data-i18n="key8">Cell walls made mainly of cellulose, not chitin; often produces motile zoospores; aquatic or parasitic on plants</span> <span class="goto">→ 6</span></p>
+      <p><b>b.</b> <span data-i18n="key9">Cell walls made of chitin; no motile zoospores produced</span> <span class="goto">→ 9</span></p>
     </div>
     <div class="couplet"><span class="cnum">6</span>
-      <p><b>a.</b> Aquatic; grows as a cottony white mycelium on dead fish, insects, or other decaying matter in water <span class="goto term">→ Box V</span></p>
-      <p><b>b.</b> Not aquatic on dead animals <span class="goto">→ 7</span></p>
+      <p><b>a.</b> <span data-i18n="key10">Aquatic; grows as a cottony white mycelium on dead fish, insects, or other decaying matter in water</span> <span class="goto term">→ Box V</span></p>
+      <p><b>b.</b> <span data-i18n="key11">Not aquatic on dead animals</span> <span class="goto">→ 7</span></p>
     </div>
     <div class="couplet"><span class="cnum">7</span>
-      <p><b>a.</b> Causes damping-off and root rot of seedlings; cottony mycelium develops in wet soil or water around the roots <span class="goto term">→ Box VI</span></p>
-      <p><b>b.</b>Does not cause seedling root rot; produces distinctive leaf disease symptoms <span class="goto">→ 8</span></p>
+      <p><b>a.</b> <span data-i18n="key12">Causes damping-off and root rot of seedlings; cottony mycelium develops in wet soil or water around the roots</span> <span class="goto term">→ Box VI</span></p>
+      <p><b>b.</b> <span data-i18n="key13">Does not cause seedling root rot; produces distinctive leaf disease symptoms</span> <span class="goto">→ 8</span></p>
     </div>
     <div class="couplet"><span class="cnum">8</span>
-      <p><b>a.</b> Late blight of potato and tomato: dark brown-black lesions on leaves and stems, white downy mold on the leaf underside in humid weather, tubers also rot <span class="goto term">→ Box VII</span></p>
-      <p><b>b.</b> Downy mildew: grayish-violet felty growth on the leaf underside following the veins, matching yellow patches above <span class="goto term">→ Box VIII</span></p>
+      <p><b>a.</b> <span data-i18n="key14">Late blight of potato and tomato: dark brown-black lesions on leaves and stems, white downy mold on the leaf underside in humid weather, tubers also rot</span> <span class="goto term">→ Box VII</span></p>
+      <p><b>b.</b> <span data-i18n="key15">Downy mildew: grayish-violet felty growth on the leaf underside following the veins, matching yellow patches above</span> <span class="goto term">→ Box VIII</span></p>
     </div>
     <div class="couplet"><span class="cnum">9</span>
-      <p><b>a.</b> Hyphae coenocytic (few or no cross-walls); fast-growing, woolly gray-white mold typical on bread, fruit, or dung <span class="goto">→ 10</span></p>
-      <p><b>b.</b> Hyphae divided by regular cross-walls (septa) <span class="goto">→ 11</span></p>
+      <p><b>a.</b> <span data-i18n="key16">Hyphae coenocytic (few or no cross-walls); fast-growing, woolly gray-white mold typical on bread, fruit, or dung</span> <span class="goto">→ 10</span></p>
+      <p><b>b.</b> <span data-i18n="key17">Hyphae divided by regular cross-walls (septa)</span> <span class="goto">→ 11</span></p>
     </div>
     <div class="couplet"><span class="cnum">10</span>
-      <p><b>a.</b> Sporangiophores unbranched, arising singly or in small groups directly from the mycelium; no stolons or rhizoids ("pin mold") <span class="goto term">→ Box IX</span></p>
-      <p><b>b.</b> Mycelium with arching stolons and root-like rhizoids; sporangia turn black at maturity ("black bread mold") <span class="goto term">→ Box X</span></p>
+      <p><b>a.</b> <span data-i18n="key18">Sporangiophores unbranched, arising singly or in small groups directly from the mycelium; no stolons or rhizoids ("pin mold")</span> <span class="goto term">→ Box IX</span></p>
+      <p><b>b.</b> <span data-i18n="key19">Mycelium with arching stolons and root-like rhizoids; sporangia turn black at maturity ("black bread mold")</span> <span class="goto term">→ Box X</span></p>
     </div>
     <div class="couplet"><span class="cnum">11</span>
-      <p><b>a.</b> Sexual spores (ascospores, usually 8) form inside a sac-like cell, the ascus <span class="goto">→ 12</span></p>
-      <p><b>b.</b> Sexual spores (basidiospores, usually 4) form externally on a club-shaped cell, the basidium <span class="goto">→ 22</span></p>
+      <p><b>a.</b> <span data-i18n="key20">Sexual spores (ascospores, usually 8) form inside a sac-like cell, the ascus</span> <span class="goto">→ 12</span></p>
+      <p><b>b.</b> <span data-i18n="key21">Sexual spores (basidiospores, usually 4) form externally on a club-shaped cell, the basidium</span> <span class="goto">→ 22</span></p>
     </div>
     <div class="couplet"><span class="cnum">12</span>
-      <p><b>a.</b> Unicellular for most of its life cycle, reproducing by budding; no true mycelium formed <span class="goto">→ 13</span></p>
-      <p><b>b.</b> Forms a true, thread-like, multicellular mycelium <span class="goto">→ 14</span></p>
+      <p><b>a.</b> <span data-i18n="key22">Unicellular for most of its life cycle, reproducing by budding; no true mycelium formed</span> <span class="goto">→ 13</span></p>
+      <p><b>b.</b> <span data-i18n="key23">Forms a true, thread-like, multicellular mycelium</span> <span class="goto">→ 14</span></p>
     </div>
     <div class="couplet"><span class="cnum">13</span>
-      <p><b>a.</b> Non-pathogenic; used in baking and brewing; ferments sugar to carbon dioxide and alcohol <span class="goto term">→ Box XI</span></p>
-      <p><b>b.</b> Opportunistic human pathogen, causing candidiasis (thrush) <span class="goto term">→ Box XII</span></p>
+      <p><b>a.</b> <span data-i18n="key24">Non-pathogenic; used in baking and brewing; ferments sugar to carbon dioxide and alcohol</span> <span class="goto term">→ Box XI</span></p>
+      <p><b>b.</b> <span data-i18n="key25">Opportunistic human pathogen, causing candidiasis (thrush)</span> <span class="goto term">→ Box XII</span></p>
     </div>
     <div class="couplet"><span class="cnum">14</span>
-      <p><b>a.</b> Reproduces mainly by powdery asexual spores (conidia) on simple conidiophores; no large fleshy fruiting body <span class="goto">→ 15</span></p>
-      <p><b>b.</b>Produces a macroscopic sexual fruiting body, cup, morel, truffle, or resting structure <span class="goto">→ 19</span></p>
+      <p><b>a.</b> <span data-i18n="key26">Reproduces mainly by powdery asexual spores (conidia) on simple conidiophores; no large fleshy fruiting body</span> <span class="goto">→ 15</span></p>
+      <p><b>b.</b> <span data-i18n="key27">Produces a macroscopic sexual fruiting body, cup, morel, truffle, or resting structure</span> <span class="goto">→ 19</span></p>
     </div>
     <div class="couplet"><span class="cnum">15</span>
-      <p><b>a.</b> Conidiophores brush-shaped (a "penicillus"); colonies typically blue-green <span class="goto term">→ Box XIII</span></p>
-      <p><b>b.</b> Conidiophores not brush-shaped <span class="goto">→ 16</span></p>
+      <p><b>a.</b> <span data-i18n="key28">Conidiophores brush-shaped (a "penicillus"); colonies typically blue-green</span> <span class="goto term">→ Box XIII</span></p>
+      <p><b>b.</b> <span data-i18n="key29">Conidiophores not brush-shaped</span> <span class="goto">→ 16</span></p>
     </div>
     <div class="couplet"><span class="cnum">16</span>
-      <p><b>a.</b> Conidiophore ends in a swollen vesicle with spore chains radiating outward; colony green, black, or yellow <span class="goto term">→ Box XIV</span></p>
-      <p><b>b.</b> A plant pathogen causing rot or a powdery/felty coating <span class="goto">→ 17</span></p>
+      <p><b>a.</b> <span data-i18n="key30">Conidiophore ends in a swollen vesicle with spore chains radiating outward; colony green, black, or yellow</span> <span class="goto term">→ Box XIV</span></p>
+      <p><b>b.</b> <span data-i18n="key31">A plant pathogen causing rot or a powdery/felty coating</span> <span class="goto">→ 17</span></p>
     </div>
     <div class="couplet"><span class="cnum">17</span>
-      <p><b>a.</b> Soft, gray, fuzzy mold on ripening fruit such as grapes or strawberries ("gray mold") <span class="goto term">→ Box XV</span></p>
-      <p><b>b.</b> Not a gray fuzzy mold on soft fruit <span class="goto">→ 18</span></p>
+      <p><b>a.</b> <span data-i18n="key32">Soft, gray, fuzzy mold on ripening fruit such as grapes or strawberries ("gray mold")</span> <span class="goto term">→ Box XV</span></p>
+      <p><b>b.</b> <span data-i18n="key33">Not a gray fuzzy mold on soft fruit</span> <span class="goto">→ 18</span></p>
     </div>
     <div class="couplet"><span class="cnum">18</span>
-      <p><b>a.</b> Brown rot of stone fruit; tan-brown spore tufts form in concentric rings on the mummified fruit <span class="goto term">→ Box XVI</span></p>
-      <p><b>b.</b> Powdery mildew; a white, powder-like coating covers leaves, shoots, or buds <span class="goto term">→ Box XVII</span></p>
+      <p><b>a.</b> <span data-i18n="key34">Brown rot of stone fruit; tan-brown spore tufts form in concentric rings on the mummified fruit</span> <span class="goto term">→ Box XVI</span></p>
+      <p><b>b.</b> <span data-i18n="key35">Powdery mildew; a white, powder-like coating covers leaves, shoots, or buds</span> <span class="goto term">→ Box XVII</span></p>
     </div>
     <div class="couplet"><span class="cnum">19</span>
-      <p><b>a.</b> Hard, purple-black, banana-shaped resting structure (a sclerotium, or "ergot") replaces individual grain kernels, usually in rye <span class="goto term">→ Box XVIII</span></p>
-      <p><b>b.</b> Fruiting body is not a sclerotium replacing grain kernels <span class="goto">→ 20</span></p>
+      <p><b>a.</b> <span data-i18n="key36">Hard, purple-black, banana-shaped resting structure (a sclerotium, or "ergot") replaces individual grain kernels, usually in rye</span> <span class="goto term">→ Box XVIII</span></p>
+      <p><b>b.</b> <span data-i18n="key37">Fruiting body is not a sclerotium replacing grain kernels</span> <span class="goto">→ 20</span></p>
     </div>
     <div class="couplet"><span class="cnum">20</span>
-      <p><b>a.</b> Fruiting body develops entirely underground (hypogeous); solid and knobby, ball-shaped ("truffle") <span class="goto term">→ Box XIX</span></p>
-      <p><b>b.</b>Fruiting body develops above ground <span class="goto">→ 32</span></p>
+      <p><b>a.</b> <span data-i18n="key38">Fruiting body develops entirely underground (hypogeous); solid and knobby, ball-shaped ("truffle")</span> <span class="goto term">→ Box XIX</span></p>
+      <p><b>b.</b> <span data-i18n="key39">Fruiting body develops above ground</span> <span class="goto">→ 32</span></p>
     </div>
     <div class="couplet"><span class="cnum">21</span>
-      <p><b>a.</b> Cap irregularly folded and convoluted, brain-like, reddish-brown; contains toxins and needs careful preparation ("false morel") <span class="goto term">→ Box XX</span></p>
-      <p><b>b.</b> Fruiting body a simple cup or saucer shape <span class="goto term">→ Box XXI</span></p>
+      <p><b>a.</b> <span data-i18n="key40">Cap irregularly folded and convoluted, brain-like, reddish-brown; contains toxins</span> <span class="goto term">→ Box XX</span></p>
+      <p><b>b.</b> <span data-i18n="key41">Fruiting body a simple cup or saucer shape</span> <span class="goto term">→ Box XXI</span></p>
     </div>
     <div class="couplet"><span class="cnum">22</span>
-      <p><b>a.</b> Plant parasite that replaces host tissue with dusty masses of spores; no fleshy fruiting body is ever formed <span class="goto">→ 23</span></p>
-      <p><b>b.</b> Forms its own visible fruiting body — a mushroom, bracket, or similar structure <span class="goto">→ 24</span></p>
+      <p><b>a.</b> <span data-i18n="key42">Plant parasite that replaces host tissue with dusty masses of spores; no fleshy fruiting body is ever formed</span> <span class="goto">→ 23</span></p>
+      <p><b>b.</b> <span data-i18n="key43">Forms its own visible fruiting body — a mushroom, bracket, or similar structure</span> <span class="goto">→ 24</span></p>
     </div>
     <div class="couplet"><span class="cnum">23</span>
-      <p><b>a.</b> Infects maize; large gray-black galls replace the kernels, later bursting to release powdery black spores ("corn smut") <span class="goto term">→ Box XXII</span></p>
-      <p><b>b.</b> Infects cereals and grasses; orange to rust-brown powdery pustules erupt on stems and leaves ("cereal rust") <span class="goto term">→ Box XXIII</span></p>
+      <p><b>a.</b> <span data-i18n="key44">Infects maize; large gray-black galls replace the kernels, later bursting to release powdery black spores ("corn smut")</span> <span class="goto term">→ Box XXII</span></p>
+      <p><b>b.</b> <span data-i18n="key45">Infects cereals and grasses; orange to rust-brown powdery pustules erupt on stems and leaves ("cereal rust")</span> <span class="goto term">→ Box XXIII</span></p>
     </div>
     <div class="couplet"><span class="cnum">24</span>
-      <p><b>a.</b>Tough or woody fruiting body attached to wood; pores underneath <span class="goto">→ 33</span></p>
-      <p><b>b.</b>Fruiting body otherwise shaped: fleshy mushroom, puffball, coral, or stinkhorn <span class="goto">→ 34</span></p>
+      <p><b>a.</b> <span data-i18n="key46">Tough or woody fruiting body attached to wood; pores underneath</span> <span class="goto">→ 33</span></p>
+      <p><b>b.</b> <span data-i18n="key47">Fruiting body otherwise shaped: fleshy mushroom, puffball, coral, or stinkhorn</span> <span class="goto">→ 34</span></p>
     </div>
     <div class="couplet"><span class="cnum">25</span>
-      <p><b>a.</b> Begins as a whitish "egg"; the mature cap is covered in a slimy, foul-smelling, dark spore mass on a white stalk ("stinkhorn") <span class="goto term">→ Box XXV</span></p>
-      <p><b>b.</b>No foul-smelling slime or dark spore mass <span class="goto">→ 26</span></p>
+      <p><b>a.</b> <span data-i18n="key48">Begins as a whitish "egg"; the mature cap is covered in a slimy, foul-smelling, dark spore mass on a white stalk ("stinkhorn")</span> <span class="goto term">→ Box XXV</span></p>
+      <p><b>b.</b> <span data-i18n="key49">No foul-smelling slime or dark spore mass</span> <span class="goto">→ 26</span></p>
     </div>
     <div class="couplet"><span class="cnum">26</span>
-      <p><b>a.</b>Honey-colored, often scaly caps in clusters on wood, with black cord-like rhizomorphs <span class="goto">→ 35</span></p>
-      <p><b>b.</b> Does not grow in dense clusters with black rhizomorphs <span class="goto">→ 27</span></p>
+      <p><b>a.</b> <span data-i18n="key50">Honey-colored, often scaly caps in clusters on wood, with black cord-like rhizomorphs</span> <span class="goto">→ 35</span></p>
+      <p><b>b.</b> <span data-i18n="key51">Does not grow in dense clusters with black rhizomorphs</span> <span class="goto">→ 27</span></p>
     </div>
     <div class="couplet"><span class="cnum">27</span>
-      <p><b>a.</b> Funnel-shaped, egg-yolk yellow throughout; underside with blunt, forking ridges (false gills), not true gills <span class="goto term">→ Box XXVII</span></p>
-      <p><b>b.</b>Not a yellow funnel with blunt, branching ridges underneath <span class="goto">→ 28</span></p>
+      <p><b>a.</b> <span data-i18n="key52">Funnel-shaped, egg-yolk yellow throughout; underside with blunt, forking ridges (false gills), not true gills</span> <span class="goto term">→ Box XXVII</span></p>
+      <p><b>b.</b> <span data-i18n="key53">Not a yellow funnel with blunt, branching ridges underneath</span> <span class="goto">→ 28</span></p>
     </div>
     <div class="couplet"><span class="cnum">28</span>
-      <p><b>a.</b>Cap underside spongy with fine pores rather than gills <span class="goto">→ 36</span></p>
-      <p><b>b.</b>Blade-like true gills beneath cap <span class="goto">→ 29</span></p>
+      <p><b>a.</b> <span data-i18n="key54">Cap underside spongy with fine pores rather than gills</span> <span class="goto">→ 36</span></p>
+      <p><b>b.</b> <span data-i18n="key55">Blade-like true gills beneath cap</span> <span class="goto">→ 29</span></p>
     </div>
     <div class="couplet"><span class="cnum">29</span>
-      <p><b>a.</b>Stem base surrounded by a cup-like volva <span class="goto">→ 37</span></p>
-      <p><b>b.</b>No volva at stem base <span class="goto">→ 31</span></p>
+      <p><b>a.</b> <span data-i18n="key56">Stem base surrounded by a cup-like volva</span> <span class="goto">→ 37</span></p>
+      <p><b>b.</b> <span data-i18n="key57">No volva at stem base</span> <span class="goto">→ 31</span></p>
     </div>
     <div class="couplet"><span class="cnum">30</span>
-      <p><b>a.</b>Smooth olive-green to yellowish cap; white gills; white volva; deadly poisonous <span class="goto term">→ Box XXIX</span></p>
-      <p><b>b.</b>Red, white-warted cap; white gills and volva <span class="goto term">→ Box XXX</span></p>
+      <p><b>a.</b> <span data-i18n="key58">Smooth olive-green to yellowish cap; white gills; white volva; deadly poisonous</span> <span class="goto term">→ Box XXIX</span></p>
+      <p><b>b.</b> <span data-i18n="key59">Red, white-warted cap; white gills and volva</span> <span class="goto term">→ Box XXX</span></p>
     </div>
     <div class="couplet"><span class="cnum">31</span>
-      <p><b>a.</b>Umbrella-shaped cap with brown scales; whitish gills and a ring <span class="goto">→ 38</span></p>
-      <p><b>b.</b>Otherwise: pink-to-brown gills, lilac gills, or ink-like dissolving gills <span class="goto">→ 39</span></p>
+      <p><b>a.</b> <span data-i18n="key60">Umbrella-shaped cap with brown scales; whitish gills and a ring</span> <span class="goto">→ 38</span></p>
+      <p><b>b.</b> <span data-i18n="key61">Otherwise: pink-to-brown gills, lilac gills, or ink-like dissolving gills</span> <span class="goto">→ 39</span></p>
     </div>
     <div class="couplet"><span class="cnum">32</span>
-      <p><b>a.</b> Irregular brown honeycomb cap with deep pits and ridges, hollow inside <span class="goto term">→ Box XXXIX</span></p>
-      <p><b>b.</b> Reddish-brown brain-like folds, not honeycomb pits <span class="goto">→ 21</span></p>
+      <p><b>a.</b> <span data-i18n="key62">Irregular brown honeycomb cap with deep pits and ridges, hollow inside</span> <span class="goto term">→ Box XXXIX</span></p>
+      <p><b>b.</b> <span data-i18n="key63">No honeycomb pits; fruiting body folded or cup-shaped</span> <span class="goto">→ 21</span></p>
     </div>
     <div class="couplet"><span class="cnum">33</span>
-      <p><b>a.</b> Thick, perennial, hoof-shaped gray bracket with fine pores beneath <span class="goto term">→ Box XXIV</span></p>
-      <p><b>b.</b> Thin, fan-shaped bracket with concentric colored bands <span class="goto term">→ Box XL</span></p>
+      <p><b>a.</b> <span data-i18n="key64">Thick, perennial, hoof-shaped gray bracket with fine pores beneath</span> <span class="goto term">→ Box XXIV</span></p>
+      <p><b>b.</b> <span data-i18n="key65">Thin, fan-shaped bracket with concentric colored bands</span> <span class="goto term">→ Box XL</span></p>
     </div>
     <div class="couplet"><span class="cnum">34</span>
-      <p><b>a.</b> Rounded, enclosed spore sac without a cap or exposed gills <span class="goto">→ 40</span></p>
-      <p><b>b.</b> Spore-bearing surface exposed on a coral-like body, or body develops a cap or stalk <span class="goto">→ 41</span></p>
+      <p><b>a.</b> <span data-i18n="key66">Rounded, enclosed spore sac without a cap or exposed gills</span> <span class="goto">→ 40</span></p>
+      <p><b>b.</b> <span data-i18n="key67">Spore-bearing surface exposed on a coral-like body, or body develops a cap or stalk</span> <span class="goto">→ 41</span></p>
     </div>
     <div class="couplet"><span class="cnum">35</span>
-      <p><b>a.</b> Mature cap has a persistent ring around the stem; honey fungus with an annulus <span class="goto term">→ Box XXXVIII</span></p>
-      <p><b>b.</b> Armillaria with variable or absent ring; group-level identification <span class="goto term">→ Box XXVI</span></p>
+      <p><b>a.</b> <span data-i18n="key68">Mature cap has a persistent ring around the stem; honey fungus with an annulus</span> <span class="goto term">→ Box XXXVIII</span></p>
+      <p><b>b.</b> <span data-i18n="key69">Armillaria with variable or absent ring; group-level identification</span> <span class="goto term">→ Box XXVI</span></p>
     </div>
     <div class="couplet"><span class="cnum">36</span>
-      <p><b>a.</b> Brown cap, pale to olive pores, pale stem with a fine net-like pattern; flesh does not stain blue <span class="goto term">→ Box XXVIII</span></p>
-      <p><b>b.</b> Very pale grayish cap, red pores, bulbous red-yellow stem; flesh may stain blue when cut <span class="goto term">→ Box XLIII</span></p>
+      <p><b>a.</b> <span data-i18n="key70">Brown cap, pale to olive pores, pale stem with a fine net-like pattern; flesh does not stain blue</span> <span class="goto term">→ Box XXVIII</span></p>
+      <p><b>b.</b> <span data-i18n="key71">Very pale grayish cap, red pores, bulbous red-yellow stem; flesh may stain blue when cut</span> <span class="goto term">→ Box XLIII</span></p>
     </div>
     <div class="couplet"><span class="cnum">37</span>
-      <p><b>a.</b> Orange to red-orange cap, yellow gills and stem, white volva <span class="goto term">→ Box XXXVI</span></p>
-      <p><b>b.</b> White gills and stem; cap olive-green or red with white warts <span class="goto">→ 30</span></p>
+      <p><b>a.</b> <span data-i18n="key72">Orange to red-orange cap, yellow gills and stem, white volva</span> <span class="goto term">→ Box XXXVI</span></p>
+      <p><b>b.</b> <span data-i18n="key73">White gills and stem; cap olive-green or red with white warts</span> <span class="goto">→ 30</span></p>
     </div>
     <div class="couplet"><span class="cnum">38</span>
-      <p><b>a.</b> Large cap, often 20 cm or more; coarse brown scales; tall stem with a movable double ring <span class="goto term">→ Box XXXI</span></p>
-      <p><b>b.</b> Smaller, delicate scaly parasol with a less prominent ring; species of Lepiota <span class="goto term">→ Box XLII</span></p>
+      <p><b>a.</b> <span data-i18n="key74">Large cap, often 20 cm or more; coarse brown scales; tall stem with a movable double ring</span> <span class="goto term">→ Box XXXI</span></p>
+      <p><b>b.</b> <span data-i18n="key75">Smaller, delicate scaly parasol with a less prominent ring; species of Lepiota</span> <span class="goto term">→ Box XLII</span></p>
     </div>
     <div class="couplet"><span class="cnum">39</span>
-      <p><b>a.</b> Pink gills darken to chocolate-brown; cap and stem mushroom-shaped with a ring <span class="goto">→ 43</span></p>
-      <p><b>b.</b> Lilac gills or white gills that dissolve into black inky liquid <span class="goto">→ 42</span></p>
+      <p><b>a.</b> <span data-i18n="key76">Pink gills darken to chocolate-brown; cap and stem mushroom-shaped with a ring</span> <span class="goto">→ 43</span></p>
+      <p><b>b.</b> <span data-i18n="key77">Lilac gills or white gills that dissolve into black inky liquid</span> <span class="goto">→ 42</span></p>
     </div>
     <div class="couplet"><span class="cnum">40</span>
-      <p><b>a.</b> Small pear-shaped puffball with tiny warts and a top opening at maturity <span class="goto term">→ Box XXXIV</span></p>
-      <p><b>b.</b> Very large smooth pale puffball, sometimes football-sized <span class="goto term">→ Box XXXV</span></p>
+      <p><b>a.</b> <span data-i18n="key78">Small pear-shaped puffball with tiny warts and a top opening at maturity</span> <span class="goto term">→ Box XXXIV</span></p>
+      <p><b>b.</b> <span data-i18n="key79">Very large smooth pale puffball, sometimes football-sized</span> <span class="goto term">→ Box XXXV</span></p>
     </div>
     <div class="couplet"><span class="cnum">41</span>
-      <p><b>a.</b> Yellow, repeatedly branched coral-like fruiting body without a cap <span class="goto term">→ Box XLIV</span></p>
-      <p><b>b.</b> A capped mushroom or a stinkhorn, not branched like coral <span class="goto">→ 25</span></p>
+      <p><b>a.</b> <span data-i18n="key80">Yellow, repeatedly branched coral-like fruiting body without a cap</span> <span class="goto term">→ Box XLIV</span></p>
+      <p><b>b.</b> <span data-i18n="key81">A capped mushroom or a stinkhorn, not branched like coral</span> <span class="goto">→ 25</span></p>
     </div>
     <div class="couplet"><span class="cnum">42</span>
-      <p><b>a.</b> Shaggy, cylindrical white cap that darkens and liquefies from its edge <span class="goto term">→ Box XXXVII</span></p>
-      <p><b>b.</b> Lilac-purple cap and gills; mature gills do not dissolve into ink <span class="goto term">→ Box XLI</span></p>
+      <p><b>a.</b> <span data-i18n="key82">Shaggy, cylindrical white cap that darkens and liquefies from its edge</span> <span class="goto term">→ Box XXXVII</span></p>
+      <p><b>b.</b> <span data-i18n="key83">Lilac-purple cap and gills; mature gills do not dissolve into ink</span> <span class="goto term">→ Box XLI</span></p>
     </div>
     <div class="couplet"><span class="cnum">43</span>
-      <p><b>a.</b> In grassland, relatively slender white to cream cap, usually without cultivated-mushroom features <span class="goto term">→ Box XXXIII</span></p>
-      <p><b>b.</b> Broader Agaricus group; species varies in cap and habitat <span class="goto term">→ Box XXXII</span></p>
+      <p><b>a.</b> <span data-i18n="key84">In grassland, relatively slender white to cream cap, usually without cultivated-mushroom features</span> <span class="goto term">→ Box XXXIII</span></p>
+      <p><b>b.</b> <span data-i18n="key85">Broader Agaricus group; species varies in cap and habitat</span> <span class="goto term">→ Box XXXII</span></p>
     </div>
   </section>
 
-  <section id="boxes-section">
-    <h2>Identification boxes</h2>
-    <div id="boxes"></div>
-  </section>
+
 
 </div>
 
@@ -368,128 +407,150 @@ function romanNumeral(n){
 }
 const roman = species.map((_,i)=>romanNumeral(i+1));
 
+const translations = {"title": {"en": "Dichotomous Key to the Fungi", "hu": "Gombahatározó"}, "subtitle": {"en": "44 fungi and fungus-like organisms — slime molds, water molds, and true fungi", "hu": "44 gomba és gombaszerű élőlény — nyálkagombák, petespórás szervezetek és valódi gombák"}, "instructions": {"en": "Follow the key by choosing a or b at each step. A number leads to the next couplet; a Roman numeral identifies a box. Open the tray, scroll the name above the chosen box, and drag it down. Then check your answers.", "hu": "Minden lépésben válaszd az a vagy a b állítást. A szám a következő elágazáshoz vezet, a római szám a megfelelő dobozt jelöli. Nyisd le a tálcát, görgesd a nevet a kiválasztott doboz fölé, majd húzd bele. Végül ellenőrizd a válaszaidat."}, "check": {"en": "Check answers", "hu": "Ellenőrzés"}, "reveal": {"en": "Reveal correct names", "hu": "Helyes nevek"}, "reset": {"en": "Reset", "hu": "Újrakezdés"}, "tray": {"en": "Names & identification boxes", "hu": "Nevek és azonosító dobozok"}, "trayHelp": {"en": "Scroll each row separately to line up a name and a box, then drag down. Click the heading to fold the tray away.", "hu": "A két sort külön görgetve igazítsd a nevet a doboz fölé, majd húzd lefelé. A fejlécére kattintva összecsukhatod a tálcát."}, "names": {"en": "Names", "hu": "Nevek"}, "boxes": {"en": "Identification boxes", "hu": "Azonosító dobozok"}, "keyTitle": {"en": "Dichotomous key", "hu": "Kétágú határozó"}, "score": {"en": "Score", "hu": "Pontszám"}, "back": {"en": "Scroll left", "hu": "Görgetés balra"}, "forward": {"en": "Scroll right", "hu": "Görgetés jobbra"}, "remove": {"en": "Return name to the pool", "hu": "Név visszahelyezése a felső sorba"}, "key0": {"en": "At some stage the organism exists as a moving, wall-less mass of protoplasm (a plasmodium); spores develop later without true hyphae", "hu": "Élete valamely szakaszában mozgó, sejtfal nélküli plazmatömeget (plazmódiumot) alkot; később valódi gombafonalak nélkül képződnek a spórái."}, "key1": {"en": "The organism never forms a plasmodium; it grows as thread-like hyphae or as single, wall-bound cells", "hu": "Nem képez plazmódiumot; fonalas hifákból vagy sejtfallal rendelkező, különálló sejtekből áll."}, "key2": {"en": "Fruiting body one single large, cushion-like mass, bright egg-yolk yellow when fresh (\"dog vomit slime mold\")", "hu": "Termőteste egyetlen nagy, párnaszerű tömeg, frissen élénk tojássárga."}, "key3": {"en": "Fruiting bodies not a single large yellow cushion", "hu": "Termőteste nem egyetlen nagy, sárga párna."}, "key4": {"en": "Many small, stalked or clustered sporangia; the plasmodium is often white, cream, or yellow before fruiting", "hu": "Sok apró, nyeles vagy csoportos spóratartót képez; plazmódiuma gyakran fehér, krémszínű vagy sárga."}, "key5": {"en": "Fruiting body not a cluster of small stalked sporangia", "hu": "Nem apró, nyeles spóratartók csoportját képezi."}, "key6": {"en": "Small pink to coral globules on rotting wood, oozing a pink paste when young, turning gray-brown and powdery with age (\"wolf's milk\")", "hu": "Korhadó fán apró, rózsaszín vagy korallszínű gömbök; fiatalon rózsaszín pépet bocsátanak ki, idősen szürkésbarnák és porosak."}, "key7": {"en": "A whitish-gray, crust-like layer containing lime (calcium carbonate) granules, usually on grass or low vegetation", "hu": "Fehéres-szürke, kéregszerű réteg mészszemcsékkel, többnyire füvön vagy alacsony növényzeten."}, "key8": {"en": "Cell walls made mainly of cellulose, not chitin; often produces motile zoospores; aquatic or parasitic on plants", "hu": "Sejtfala főként cellulózt tartalmaz; gyakran mozgó rajzóspórákat képez; vízi életmódú vagy növényeken élősködik."}, "key9": {"en": "Cell walls made of chitin; no motile zoospores produced", "hu": "Sejtfala kitint tartalmaz; nem képez mozgó rajzóspórákat."}, "key10": {"en": "Aquatic; grows as a cottony white mycelium on dead fish, insects, or other decaying matter in water", "hu": "Vízben él; elpusztult halakon, rovarokon vagy más bomló anyagon fehér, vattaszerű micéliumot képez."}, "key11": {"en": "Not aquatic on dead animals", "hu": "Nem elpusztult vízi állatokon növekszik."}, "key12": {"en": "Causes damping-off and root rot of seedlings; cottony mycelium develops in wet soil or water around the roots", "hu": "Palántadőlést és gyökérrothadást okoz; nedves talajban vagy vízben a gyökerek körül vattaszerű micélium fejlődik."}, "key13": {"en": "Does not cause seedling root rot; produces distinctive leaf disease symptoms", "hu": "Nem palánták gyökérrothadását okozza, hanem jellegzetes levéltüneteket."}, "key14": {"en": "Late blight of potato and tomato: dark brown-black lesions on leaves and stems, white downy mold on the leaf underside in humid weather, tubers also rot", "hu": "Burgonyán és paradicsomon sötétbarna-fekete foltok jelennek meg a leveleken és a száron; párás időben fehér penészgyep a fonákon; a gumók is rothadnak."}, "key15": {"en": "Downy mildew: grayish-violet felty growth on the leaf underside following the veins, matching yellow patches above", "hu": "A levél fonákán az erekhez igazodó szürkésibolya penészgyep, a színén ennek megfelelő sárga foltok jelennek meg."}, "key16": {"en": "Hyphae coenocytic (few or no cross-walls); fast-growing, woolly gray-white mold typical on bread, fruit, or dung", "hu": "Hifái sokmagvúak, kevés harántfallal vagy harántfalak nélkül; gyorsan növő, gyapjas, szürkésfehér penész kenyéren, gyümölcsön vagy trágyán."}, "key17": {"en": "Hyphae divided by regular cross-walls (septa)", "hu": "Hifáit szabályos harántfalak (szeptumok) tagolják."}, "key18": {"en": "Sporangiophores unbranched, arising singly or in small groups directly from the mycelium; no stolons or rhizoids (\"pin mold\")", "hu": "A spóratartó nyelek elágazás nélkül, egyenként vagy kis csoportokban közvetlenül a micéliumból erednek; indák és gyökérszerű rögzítőfonalak nincsenek."}, "key19": {"en": "Mycelium with arching stolons and root-like rhizoids; sporangia turn black at maturity (\"black bread mold\")", "hu": "Indaszerű fonalai és gyökérszerű rögzítőfonalai vannak; spóratartói éretten feketék."}, "key20": {"en": "Sexual spores (ascospores, usually 8) form inside a sac-like cell, the ascus", "hu": "Ivaros spórái (rendszerint 8 aszkospóra) egy tömlőszerű sejt, az aszkusz belsejében képződnek."}, "key21": {"en": "Sexual spores (basidiospores, usually 4) form externally on a club-shaped cell, the basidium", "hu": "Ivaros spórái (rendszerint 4 bazidiospóra) egy bunkószerű sejt, a bazídium külső felszínén képződnek."}, "key22": {"en": "Unicellular for most of its life cycle, reproducing by budding; no true mycelium formed", "hu": "Életciklusa nagy részében egysejtű, sarjadzással szaporodik; valódi micéliumot nem alkot."}, "key23": {"en": "Forms a true, thread-like, multicellular mycelium", "hu": "Valódi, fonalas, többsejtű micéliumot alkot."}, "key24": {"en": "Non-pathogenic; used in baking and brewing; ferments sugar to carbon dioxide and alcohol", "hu": "Sütéshez és sörfőzéshez használják; a cukrot szén-dioxiddá és alkohollá erjeszti."}, "key25": {"en": "Opportunistic human pathogen, causing candidiasis (thrush)", "hu": "Opportunista emberi kórokozó; candidiasist, például szájpenészt okozhat."}, "key26": {"en": "Reproduces mainly by powdery asexual spores (conidia) on simple conidiophores; no large fleshy fruiting body", "hu": "Főként ivartalan spórákkal (konídiumokkal) szaporodik; nagy, húsos termőteste nincs."}, "key27": {"en": "Produces a macroscopic sexual fruiting body, cup, morel, truffle, or resting structure", "hu": "Szabad szemmel látható ivaros termőtestet vagy nyugvóképletet hoz létre."}, "key28": {"en": "Conidiophores brush-shaped (a \"penicillus\"); colonies typically blue-green", "hu": "Konídiumtartói ecsetszerűen elágaznak; telepei jellemzően kékeszöldek."}, "key29": {"en": "Conidiophores not brush-shaped", "hu": "Konídiumtartói nem ecsetszerűek."}, "key30": {"en": "Conidiophore ends in a swollen vesicle with spore chains radiating outward; colony green, black, or yellow", "hu": "Konídiumtartója duzzadt fejecskében végződik, amelyről spóraláncok sugároznak kifelé; telepe zöld, fekete vagy sárga."}, "key31": {"en": "A plant pathogen causing rot or a powdery/felty coating", "hu": "Növényi kórokozó, amely rothadást vagy lisztes, nemezes bevonatot okoz."}, "key32": {"en": "Soft, gray, fuzzy mold on ripening fruit such as grapes or strawberries (\"gray mold\")", "hu": "Érő gyümölcsökön, például szőlőn vagy szamócán puha, szürke, bolyhos penészgyepet képez."}, "key33": {"en": "Not a gray fuzzy mold on soft fruit", "hu": "Nem szürke, bolyhos penészgyepet képez a puha gyümölcsökön."}, "key34": {"en": "Brown rot of stone fruit; tan-brown spore tufts form in concentric rings on the mummified fruit", "hu": "Csonthéjas gyümölcsök barnarothadását okozza; a mumifikálódó gyümölcsön barnás spórapárnák alkotnak koncentrikus köröket."}, "key35": {"en": "Powdery mildew; a white, powder-like coating covers leaves, shoots, or buds", "hu": "Fehér, lisztszerű bevonat jelenik meg a leveleken, hajtásokon vagy rügyeken."}, "key36": {"en": "Hard, purple-black, banana-shaped resting structure (a sclerotium, or \"ergot\") replaces individual grain kernels, usually in rye", "hu": "Kemény, lilásfekete, hajlott nyugvóképlet (szklerócium) helyettesíti az egyes gabonaszemeket, többnyire rozsban."}, "key37": {"en": "Fruiting body is not a sclerotium replacing grain kernels", "hu": "Nem gabonaszemeket helyettesítő szkleróciumot alkot."}, "key38": {"en": "Fruiting body develops entirely underground (hypogeous); solid and knobby, ball-shaped (\"truffle\")", "hu": "Termőteste teljes egészében a föld alatt fejlődik; tömör, gömbölyded és rücskös."}, "key39": {"en": "Fruiting body develops above ground", "hu": "Termőteste a föld felett fejlődik."}, "key40": {"en": "Cap irregularly folded and convoluted, brain-like, reddish-brown; contains toxins", "hu": "Vörösesbarna süvege szabálytalanul, agyvelőszerűen redőzött; méreganyagokat tartalmaz."}, "key41": {"en": "Fruiting body a simple cup or saucer shape", "hu": "Termőteste egyszerű csésze vagy csészealj alakú."}, "key42": {"en": "Plant parasite that replaces host tissue with dusty masses of spores; no fleshy fruiting body is ever formed", "hu": "Növényi élősködő, amely a gazda szöveteiben porzó spóratömegeket képez; húsos termőteste nincs."}, "key43": {"en": "Forms its own visible fruiting body — a mushroom, bracket, or similar structure", "hu": "Önálló, jól látható termőtestet képez: kalapos gombát, taplót vagy más alakot."}, "key44": {"en": "Infects maize; large gray-black galls replace the kernels, later bursting to release powdery black spores (\"corn smut\")", "hu": "Kukoricát fertőz; a szemek helyén nagy szürkésfekete daganatok fejlődnek, amelyek később felrepedve fekete spóraport szórnak."}, "key45": {"en": "Infects cereals and grasses; orange to rust-brown powdery pustules erupt on stems and leaves (\"cereal rust\")", "hu": "Gabonákon és füveken narancs- vagy rozsdabarna, porzó spóratelepek törnek elő a szárból és a levelekből."}, "key46": {"en": "Tough or woody fruiting body attached to wood; pores underneath", "hu": "Fához rögzült, szívós vagy fás termőtest; alul pórusos."}, "key47": {"en": "Fruiting body otherwise shaped: fleshy mushroom, puffball, coral, or stinkhorn", "hu": "Más alakú termőtest: húsos kalapos gomba, zárt gömb, korallszerű vagy nyálkás süvegű képlet."}, "key48": {"en": "Begins as a whitish \"egg\"; the mature cap is covered in a slimy, foul-smelling, dark spore mass on a white stalk (\"stinkhorn\")", "hu": "Fehéres tojásszerű képletből fejlődik; fehér tönkjén a kifejlett süveget bűzös, sötét, nyálkás spóratömeg borítja."}, "key49": {"en": "No foul-smelling slime or dark spore mass", "hu": "Nem képez bűzös, sötét, nyálkás spóratömeget."}, "key50": {"en": "Honey-colored, often scaly caps in clusters on wood, with black cord-like rhizomorphs", "hu": "Fán csoportosan növő, mézszínű, gyakran pikkelyes kalapok; fekete, zsinórszerű gombafonalkötegek (rizomorfák)."}, "key51": {"en": "Does not grow in dense clusters with black rhizomorphs", "hu": "Nem alkot sűrű csoportokat fekete rizomorfákkal."}, "key52": {"en": "Funnel-shaped, egg-yolk yellow throughout; underside with blunt, forking ridges (false gills), not true gills", "hu": "Tölcséres, tojássárga termőtest; a kalap alján tompa, elágazó redők, nem valódi lemezek."}, "key53": {"en": "Not a yellow funnel with blunt, branching ridges underneath", "hu": "Nem sárga tölcsér, amelynek alján tompa, elágazó redők vannak."}, "key54": {"en": "Cap underside spongy with fine pores rather than gills", "hu": "A kalap alsó felszíne szivacsos, apró pórusokkal."}, "key55": {"en": "Blade-like true gills beneath cap", "hu": "A kalap alatt valódi, pengeszerű lemezek vannak."}, "key56": {"en": "Stem base surrounded by a cup-like volva", "hu": "A tönk tövét csészeszerű bocskor veszi körül."}, "key57": {"en": "No volva at stem base", "hu": "A tönk tövén nincs bocskor."}, "key58": {"en": "Smooth olive-green to yellowish cap; white gills; white volva; deadly poisonous", "hu": "Sima, olívazöld vagy sárgászöld kalap; fehér lemezek és bocskor; halálosan mérgező."}, "key59": {"en": "Red, white-warted cap; white gills and volva", "hu": "Piros kalap fehér pettyekkel; fehér lemezek és bocskor."}, "key60": {"en": "Umbrella-shaped cap with brown scales; whitish gills and a ring", "hu": "Esernyőszerű kalap barna pikkelyekkel; fehéres lemezek és gallér."}, "key61": {"en": "Otherwise: pink-to-brown gills, lilac gills, or ink-like dissolving gills", "hu": "Más jellegű: rózsaszínből barnuló, lilás vagy tintaszerűen elfolyósodó lemezek."}, "key62": {"en": "Irregular brown honeycomb cap with deep pits and ridges, hollow inside", "hu": "Barna, méhsejtszerű süveg mély gödrökkel és bordákkal; belül üreges."}, "key63": {"en": "No honeycomb pits; fruiting body folded or cup-shaped", "hu": "Nincsenek méhsejtszerű gödrök; a termőtest redőzött vagy csésze alakú."}, "key64": {"en": "Thick, perennial, hoof-shaped gray bracket with fine pores beneath", "hu": "Vastag, évelő, patkó alakú, szürke tapló; alján apró pórusok."}, "key65": {"en": "Thin, fan-shaped bracket with concentric colored bands", "hu": "Vékony, legyező alakú tapló koncentrikus, színes sávokkal."}, "key66": {"en": "Rounded, enclosed spore sac without a cap or exposed gills", "hu": "Gömbölyded, zárt spóratermő test; nincs kalapja vagy szabadon álló lemeze."}, "key67": {"en": "Spore-bearing surface exposed on a coral-like body, or body develops a cap or stalk", "hu": "Spóratermő felszíne szabadon áll egy korallszerű testen, vagy kalapja, illetve tönkje fejlődik."}, "key68": {"en": "Mature cap has a persistent ring around the stem; honey fungus with an annulus", "hu": "A kifejlett példány tönkjén tartós gallér található."}, "key69": {"en": "Armillaria with variable or absent ring; group-level identification", "hu": "Tuskógombák csoportszintű azonosítása; a gallér változó vagy hiányzik."}, "key70": {"en": "Brown cap, pale to olive pores, pale stem with a fine net-like pattern; flesh does not stain blue", "hu": "Barna kalap, halványtól olívásig változó pórusok; világos tönk finom hálózattal; húsa nem kékül."}, "key71": {"en": "Very pale grayish cap, red pores, bulbous red-yellow stem; flesh may stain blue when cut", "hu": "Nagyon világos, szürkés kalap, piros pórusok, gumós, piros-sárga tönk; húsa vágásra kékülhet."}, "key72": {"en": "Orange to red-orange cap, yellow gills and stem, white volva", "hu": "Narancssárga vagy narancsvörös kalap; sárga lemezek és tönk, fehér bocskor."}, "key73": {"en": "White gills and stem; cap olive-green or red with white warts", "hu": "Fehér lemezek és tönk; olívazöld vagy piros, fehéren pettyezett kalap."}, "key74": {"en": "Large cap, often 20 cm or more; coarse brown scales; tall stem with a movable double ring", "hu": "Nagy, gyakran legalább 20 cm-es kalap durva barna pikkelyekkel; magas tönk, elmozdítható kettős gallér."}, "key75": {"en": "Smaller, delicate scaly parasol with a less prominent ring; species of Lepiota", "hu": "Kisebb, karcsú, pikkelyes, ernyős kalap; kevésbé feltűnő gallér."}, "key76": {"en": "Pink gills darken to chocolate-brown; cap and stem mushroom-shaped with a ring", "hu": "A rózsaszín lemezek csokoládébarnára sötétednek; kalapja és galléros tönkje van."}, "key77": {"en": "Lilac gills or white gills that dissolve into black inky liquid", "hu": "Lilás lemezek, vagy fehér lemezek, amelyek fekete, tintaszerű folyadékká válnak."}, "key78": {"en": "Small pear-shaped puffball with tiny warts and a top opening at maturity", "hu": "Kicsi, körte alakú termőtest apró tüskékkel; éretten a tetején nyílik meg."}, "key79": {"en": "Very large smooth pale puffball, sometimes football-sized", "hu": "Nagyon nagy, sima, világos termőtest; akár labda méretű is lehet."}, "key80": {"en": "Yellow, repeatedly branched coral-like fruiting body without a cap", "hu": "Sárga, többszörösen elágazó, korallszerű termőtest; nincs kalapja."}, "key81": {"en": "A capped mushroom or a stinkhorn, not branched like coral", "hu": "Kalapot vagy nyálkás süveget képez; nem korallszerűen elágazó."}, "key82": {"en": "Shaggy, cylindrical white cap that darkens and liquefies from its edge", "hu": "Bozontos, hengeres, fehér kalap, amely a szélétől kezdve feketedik és elfolyósodik."}, "key83": {"en": "Lilac-purple cap and gills; mature gills do not dissolve into ink", "hu": "Lilás kalap és lemezek; az érett lemezek nem folynak el tintaszerűen."}, "key84": {"en": "In grassland, relatively slender white to cream cap, usually without cultivated-mushroom features", "hu": "Füves területen él; viszonylag karcsú, fehér vagy krémszínű kalapos gomba."}, "key85": {"en": "Broader Agaricus group; species varies in cap and habitat", "hu": "Csiperkék tágabb csoportja; a kalap és az élőhely fajonként változik."}};
 const pool = document.getElementById('pool');
 const boxesEl = document.getElementById('boxes');
 const scoreEl = document.getElementById('score');
-
+let language = 'en';
+let checked = false;
+let revealing = false;
+let activeDrag = null;
+try { language = localStorage.getItem('fungi-language') === 'hu' ? 'hu' : 'en'; } catch (_) {}
+function tr(key){ return translations[key][language]; }
+function nameOf(sp){ return language === 'hu' ? sp.common : sp.sci; }
 function shuffled(arr){
-  const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
   return a;
 }
-
 function makeCard(sp){
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.dataset.ans = sp.ans;
-  card.innerHTML = '<i>'+sp.sci+'</i><span class="common">'+sp.common+'</span><span class="x">×</span>';
-  card.addEventListener('pointerdown', onPointerDown);
-  card.querySelector('.x').addEventListener('pointerdown', e=>e.stopPropagation());
-  card.querySelector('.x').addEventListener('click', e=>{
-    e.stopPropagation();
-    pool.appendChild(card);
-  });
+  const card=document.createElement('div');
+  card.className='card';card.dataset.ans=sp.ans;
+  const name=document.createElement('span');name.className='name';name.textContent=nameOf(sp);
+  const remove=document.createElement('button');remove.className='x';remove.type='button';remove.textContent='×';
+  remove.setAttribute('aria-label',tr('remove'));
+  card.append(name,remove);
+  card.addEventListener('pointerdown',onPointerDown);
+  remove.addEventListener('pointerdown',e=>e.stopPropagation());
+  remove.addEventListener('click',()=>{pool.appendChild(card);refreshFeedback();});
   return card;
 }
-
-shuffled(species).forEach(sp=> pool.appendChild(makeCard(sp)) );
-
+shuffled(species).forEach(sp=>pool.appendChild(makeCard(sp)));
 roman.forEach((r,i)=>{
-  const box = document.createElement('div');
-  box.className='box';
-  box.dataset.box = i+1;
-  box.innerHTML = '<span class="label">'+r+'</span><div class="slot"></div>';
+  const box=document.createElement('div');box.className='box';box.dataset.box=i+1;
+  box.innerHTML='<span class="label">'+r+'</span><div class="slot"></div>';
   boxesEl.appendChild(box);
 });
-
-let dragPtrY = 0;
-let scrollRAF = null;
-function scrollLoop(){
-  const margin = 110, maxSpeed = 22, vh = window.innerHeight;
-  if(dragPtrY < margin) window.scrollBy(0, -maxSpeed*((margin-dragPtrY)/margin));
-  else if(dragPtrY > vh-margin) window.scrollBy(0, maxSpeed*((dragPtrY-(vh-margin))/margin));
-  scrollRAF = requestAnimationFrame(scrollLoop);
-}
-
-function onPointerDown(e){
-  const card = e.currentTarget;
-  e.preventDefault();
-  card.setPointerCapture && card.setPointerCapture(e.pointerId);
-  const rect = card.getBoundingClientRect();
-  const offX = e.clientX - rect.left, offY = e.clientY - rect.top;
-  card.style.width = rect.width+'px';
-  document.body.appendChild(card);
-  card.classList.add('dragging');
-  card.style.left = rect.left+'px';
-  card.style.top = rect.top+'px';
-  dragPtrY = e.clientY;
-  scrollRAF = requestAnimationFrame(scrollLoop);
-
-  function move(ev){
-    card.style.left = (ev.clientX-offX)+'px';
-    card.style.top = (ev.clientY-offY)+'px';
-    dragPtrY = ev.clientY;
-  }
-  function up(ev){
-    cancelAnimationFrame(scrollRAF); scrollRAF=null;
-    card.classList.remove('dragging');
-    card.style.width=''; card.style.left=''; card.style.top='';
-    document.removeEventListener('pointermove', move);
-    document.removeEventListener('pointerup', up);
-    const target = document.elementFromPoint(ev.clientX, ev.clientY);
-    const slot = target && target.closest('.slot');
-    if(slot){
-      if(slot.firstChild && slot.firstChild!==card) pool.appendChild(slot.firstChild);
-      slot.appendChild(card);
-      slot.closest('.box').classList.remove('correct','incorrect');
-      const h = slot.closest('.box').querySelector('.hint'); if(h) h.remove();
-    } else {
-      pool.appendChild(card);
-    }
-  }
-  document.addEventListener('pointermove', move);
-  document.addEventListener('pointerup', up);
-}
-
-document.getElementById('checkBtn').addEventListener('click', ()=>{
+function refreshFeedback(){
   let score=0;
   boxesEl.querySelectorAll('.box').forEach(box=>{
-    box.classList.remove('correct','incorrect');
-    const h = box.querySelector('.hint'); if(h) h.remove();
-    const card = box.querySelector('.slot').firstElementChild;
-    if(card){
-      if(parseInt(card.dataset.ans)===parseInt(box.dataset.box)){ box.classList.add('correct'); score++; }
-      else box.classList.add('incorrect');
+    const num=Number(box.dataset.box);
+    const card=box.querySelector('.slot').firstElementChild;
+    const correct=!!card && Number(card.dataset.ans)===num;
+    if(correct) score++;
+    box.classList.toggle('correct',checked && correct);
+    box.classList.toggle('incorrect',checked && !!card && !correct);
+    let hint=box.querySelector('.hint');
+    if(revealing && !correct){
+      if(!hint){hint=document.createElement('div');hint.className='hint';box.appendChild(hint);}
+      hint.textContent=nameOf(species[num-1]);
+    }else if(hint) hint.remove();
+  });
+  scoreEl.textContent=checked ? tr('score')+': '+score+' / '+species.length : '';
+}
+function applyLanguage(){
+  document.documentElement.lang=language;
+  document.title=tr('title');
+  document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));
+  document.querySelectorAll('.goto.term').forEach(el=>{
+    if(!el.dataset.roman) el.dataset.roman=el.textContent.replace('→ Box ','').trim();
+    el.textContent=language==='hu' ? '→ '+el.dataset.roman+'. doboz' : '→ Box '+el.dataset.roman;
+  });
+  document.querySelectorAll('.card').forEach(card=>{
+    card.querySelector('.name').textContent=nameOf(species[Number(card.dataset.ans)-1]);
+    card.querySelector('.x').setAttribute('aria-label',tr('remove'));
+  });
+  const button=document.getElementById('languageBtn');
+  button.textContent=language==='hu' ? 'Magyar' : 'English';
+  button.setAttribute('aria-label',language==='hu' ? 'Nyelv: magyar. Váltás angolra.' : 'Language: English. Switch to Hungarian.');
+  button.title=language==='hu' ? 'Váltás angolra' : 'Switch to Hungarian';
+  document.querySelectorAll('.scroll-button').forEach(button=>{
+    button.setAttribute('aria-label',tr(Number(button.dataset.direction)<0 ? 'back' : 'forward'));
+    button.title=button.getAttribute('aria-label');
+  });
+  pool.setAttribute('aria-label',tr('names'));boxesEl.setAttribute('aria-label',tr('boxes'));
+  refreshFeedback();
+}
+document.getElementById('languageBtn').addEventListener('click',()=>{
+  language=language==='en' ? 'hu' : 'en';applyLanguage();
+  try{localStorage.setItem('fungi-language',language);}catch(_){}
+});
+document.querySelectorAll('.scroll-button').forEach(button=>button.addEventListener('click',()=>{
+  const row=document.getElementById(button.dataset.row);
+  const count=Math.max(1,Math.floor(row.clientWidth/210));
+  row.scrollBy({left:Number(button.dataset.direction)*210*count,behavior:'smooth'});
+}));
+function onPointerDown(e){
+  if(activeDrag || (e.pointerType==='mouse' && e.button!==0)) return;
+  e.preventDefault();
+  const card=e.currentTarget,origin=card.parentElement,next=card.nextSibling;
+  const rect=card.getBoundingClientRect();
+  const offX=e.clientX-rect.left,offY=e.clientY-rect.top;
+  let pointerX=e.clientX,pointerY=e.clientY,raf;
+  activeDrag=card;
+  card.style.width=rect.width+'px';card.style.maxWidth='none';
+  card.classList.add('dragging');document.body.appendChild(card);
+  card.style.left=rect.left+'px';card.style.top=rect.top+'px';
+  // Keep dragging active for touch even after moving the card to the document body.
+  if(card.setPointerCapture) card.setPointerCapture(e.pointerId);
+  function scroll(){
+    for(const row of [pool,boxesEl]){
+      const r=row.getBoundingClientRect();
+      if(pointerY>=r.top && pointerY<=r.bottom){
+        if(pointerX<r.left+32 && pointerX>=r.left) row.scrollLeft-=10;
+        if(pointerX>r.right-32 && pointerX<=r.right) row.scrollLeft+=10;
+      }
     }
-  });
-  scoreEl.textContent = 'Score: '+score+' / '+species.length;
+    raf=requestAnimationFrame(scroll);
+  }
+  function move(ev){
+    if(ev.pointerId!==e.pointerId)return;
+    pointerX=ev.clientX;pointerY=ev.clientY;
+    card.style.left=(pointerX-offX)+'px';card.style.top=(pointerY-offY)+'px';
+  }
+  function finish(ev){
+    if(ev.pointerId!==e.pointerId)return;
+    cancelAnimationFrame(raf);
+    // Hit-test while the floating card still ignores pointer events.
+    const target=document.elementFromPoint(ev.clientX,ev.clientY);
+    const box=target && target.closest('.box');
+    if(ev.type==='pointercancel'){
+      origin.insertBefore(card,next && next.parentElement===origin ? next : null);
+    }else if(box){
+      const slot=box.querySelector('.slot');
+      if(slot.firstElementChild)pool.appendChild(slot.firstElementChild);
+      slot.appendChild(card);
+    }else pool.appendChild(card);
+    if(card.hasPointerCapture && card.hasPointerCapture(e.pointerId))card.releasePointerCapture(e.pointerId);
+    card.classList.remove('dragging');card.style.width='';card.style.maxWidth='';card.style.left='';card.style.top='';
+    document.removeEventListener('pointermove',move);
+    document.removeEventListener('pointerup',finish);
+    document.removeEventListener('pointercancel',finish);
+    activeDrag=null;refreshFeedback();
+  }
+  document.addEventListener('pointermove',move);
+  document.addEventListener('pointerup',finish);
+  document.addEventListener('pointercancel',finish);
+  raf=requestAnimationFrame(scroll);
+}
+document.getElementById('checkBtn').addEventListener('click',()=>{checked=true;revealing=false;refreshFeedback();});
+document.getElementById('revealBtn').addEventListener('click',()=>{revealing=true;refreshFeedback();});
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  boxesEl.querySelectorAll('.card').forEach(card=>pool.appendChild(card));
+  checked=false;revealing=false;refreshFeedback();
 });
+applyLanguage();
 
-document.getElementById('revealBtn').addEventListener('click', ()=>{
-  boxesEl.querySelectorAll('.box').forEach(box=>{
-    const card = box.querySelector('.slot').firstElementChild;
-    const num = parseInt(box.dataset.box);
-    const isCorrect = card && parseInt(card.dataset.ans)===num;
-    let h = box.querySelector('.hint');
-    if(!isCorrect){
-      if(!h){ h=document.createElement('div'); h.className='hint'; box.appendChild(h); }
-      h.textContent = species.find(s=>s.ans===num).sci;
-    } else if(h){ h.remove(); }
-  });
-});
-
-document.getElementById('resetBtn').addEventListener('click', ()=>{
-  boxesEl.querySelectorAll('.box').forEach(box=>{
-    box.classList.remove('correct','incorrect');
-    const h = box.querySelector('.hint'); if(h) h.remove();
-    const card = box.querySelector('.slot').firstElementChild;
-    if(card) pool.appendChild(card);
-  });
-  scoreEl.textContent='';
-});
 </script>
 </body>
 </html>
